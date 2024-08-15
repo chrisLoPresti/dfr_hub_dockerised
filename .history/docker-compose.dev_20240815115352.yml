@@ -1,0 +1,70 @@
+services:
+  server-john:
+    build:
+      context: ./server
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./server:/app
+    links:
+      - redis
+    ports:
+      - "81:5000"
+    environment:
+      NAME: "John"
+
+  server-paul:
+    build:
+      context: ./server
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./server:/app
+    links:
+      - redis
+    ports:
+      - "82:5000"
+    environment:
+      NAME: "Paul"
+
+  server-george:
+    build:
+      context: ./server
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./server:/app
+    links:
+      - redis
+    ports:
+      - "83:5000"
+    environment:
+      NAME: "George"
+
+  server-ringo:
+    build:
+      context: ./server
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./server:/app
+    links:
+      - redis
+    ports:
+      - "84:5000"
+    environment:
+      NAME: "Ringo"
+
+  redis:
+    container_name: "redis"
+    image: redis:latest
+    ports:
+      - 6379:6379
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - server-john
+      - server-paul
+      - server-george
+      - server-ringo

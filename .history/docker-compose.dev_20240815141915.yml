@@ -1,0 +1,45 @@
+services:
+  next_app:
+    container_name: next_app
+    build:
+      context: ./next-app
+      dockerfile: dev.Dockerfile
+
+    # Set environment variables directly in the docker-compose file
+    environment:
+      ENV_VARIABLE: ${ENV_VARIABLE}
+      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+
+    # Set environment variables based on the .env file
+    env_file:
+      - .env
+    volumes:
+      - ./next-app/src:/app/src
+      - ./next-app/public:/app/public
+    restart: always
+    ports:
+      - 3000:3000
+  express_server:
+    container_name: express_server
+    build:
+      context: ./server
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./server:/app
+    ports:
+      - "5000:5000"
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - 6379:6379
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - express_server
+  # Add more containers below (nginx, postgres, etc.)

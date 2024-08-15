@@ -1,0 +1,30 @@
+{
+  "name": "socket.io-chat",
+  "version": "0.0.0",
+  "description": "A simple chat client using socket.io",
+  "main": "index.js",
+  "author": "Grant Timmerman",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "@socket.io/redis-adapter": "^7.0.1",
+    "express": "4.13.4",
+    "nodemon": "^3.1.4",
+    "redis": "^3.1.2",
+    "socket.io": "^4.0.0",
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "concurrently": "^8.2.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv-flow": "^4.1.0",
+    "http": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.5.2",
+    "uuid": "^10.0.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon -L index.js"
+  }
+}
