@@ -19,9 +19,6 @@ router.route("/api/auth/refreshtoken").get(refreshtoken);
 router
   .route("/api/auth/loaduserfromsession")
   .get(verifyJWT, loaduserfromsession);
-router.route("/api/ping").post(async (req, res, next) => {
-  res.send("PING");
-});
 //put requests
 
 //delete requests
