@@ -1,16 +1,19 @@
-version: "3"
-
 services:
+  redis:
+    container_name: redis
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
   next-app:
     container_name: next-app
     build:
       context: ./next-app
       dockerfile: dev.Dockerfile
-
     # Set environment variables directly in the docker-compose file
     environment:
       ENV_VARIABLE: ${ENV_VARIABLE}
       NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+      WATCHPACK_POLLING: ${WATCHPACK_POLLING}
 
     # Set environment variables based on the .env file
     env_file:
@@ -23,7 +26,23 @@ services:
       - 3000:3000
     networks:
       - my_network
-
+  express-server:
+    container_name: express-server
+    restart: always
+    build:
+      context: ./express-server
+      dockerfile: dev.Dockerfile
+    hostname: express-server
+    volumes:
+      - ./express-server:/express-server
+    ports:
+      - "82:5000"
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - express-server
   # Add more containers below (nginx, postgres, etc.)
 
 # Define a network, which allows containers to communicate
