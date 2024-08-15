@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:18-alpine
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ RUN \
 
 COPY src ./src
 COPY public ./public
-COPY next.config.js .
+COPY next.config.mjs .
 COPY jsconfig.json .
 
 # Next.js collects completely anonymous telemetry data about general usage. Learn more here: https://nextjs.org/telemetry
