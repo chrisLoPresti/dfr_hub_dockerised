@@ -23,7 +23,11 @@ app.use(cookies());
 app.use(router);
 
 const server = http.createServer(app);
-const io = require("socket.io")(server);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+  },
+});
 
 const dataBase = process.env.MONGODB_URI;
 mongoose
@@ -44,7 +48,20 @@ io.adapter(createAdapter(pubClient, subClient));
 let numUsers = 0;
 
 io.on("connection", (socket) => {
-  socket.emit("my-name-is", serverName);
+  console.log(`a user connected with socket id: ${socket.id}`);
+
+  socket.on("user-connected", async (message) => {
+    const sockets = await io.fetchSockets();
+    const existingUserSocket = sockets.find(
+      ({ userId }) => userId === message.user
+    );
+    if (existingUserSocket) {
+      existingUserSocket.emit("new-session-started", {
+        message: "You are already logged in on another device",
+      });
+    }
+    socket.userId = message.user;
+  });
 
   let addedUser = false;
 
@@ -91,6 +108,7 @@ io.on("connection", (socket) => {
 
   // when the user disconnects.. perform this
   socket.on("disconnect", () => {
+    console.log("user disconnected: ", socket.userId);
     if (addedUser) {
       --numUsers;
 

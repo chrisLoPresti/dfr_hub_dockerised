@@ -1,5 +1,6 @@
 const User = require("../../../models/User");
 const jwt = require("jsonwebtoken");
+
 const options = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production" ? true : false,
@@ -154,6 +155,8 @@ exports.loaduserfromsession = async (req, res, next) => {
   // Retrieve the refresh token from cookies or request body
   const incomingSessionToken = req.cookies["dfr_hub_session"];
   // If no refresh token is present, deny access with a 401 Unauthorized status
+  console.log("incomingSessionToken: ", incomingSessionToken);
+
   if (!incomingSessionToken) {
     return res.status(401).json({ message: "Session token not found" });
   }

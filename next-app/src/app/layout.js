@@ -24,18 +24,19 @@ export default async function RootLayout({ children }) {
 
     try {
       const res = await apiInstance.get("/api/auth/loaduserfromsession", {
+        withCredentials: true,
         headers: {
+          "Content-Type": "application/json",
           Cookie: `${sessionCookie.name}=${sessionCookie.value};`,
         },
       });
-
       return { user: res.data, sessionCookie };
-    } catch {
+    } catch (e) {
+      console.log(e);
       return { user: null, sessionCookie };
     }
   };
   const session = await loadUserFromSession();
-
   return (
     <html lang="en">
       <body className={inter.className}>

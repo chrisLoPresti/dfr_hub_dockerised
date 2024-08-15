@@ -46,7 +46,6 @@ const useMapMarkers = () => {
   const createNewMapMarker = useCallback(
     async ({ selectedDevice, ...marker }) => {
       try {
-        console.log(marker);
         toggleAPILoading();
 
         const { results } = await elevator.getElevationForLocations({

@@ -42,7 +42,7 @@ const createUserStore = (initialState) => {
       set((state) => ({ ...state, loading: true }));
       try {
         await apiInstance.post("/api/auth/logout");
-        set({ ...initialState });
+        set({ ...initialState, loading: false });
       } catch {
         set((state) => ({
           ...state,
