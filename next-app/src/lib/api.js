@@ -4,7 +4,7 @@ const baseURL = process.env.NEXT_PUBLIC_API_ENDPOINT;
 
 export const apiInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_ENDPOINT,
-  // withCredentials: true,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
