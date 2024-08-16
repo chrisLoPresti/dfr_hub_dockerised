@@ -1,5 +1,6 @@
 FROM node:latest
 
+RUN npm install --global nodemon
 # Create app directory
 RUN mkdir -p /app
 WORKDIR /app

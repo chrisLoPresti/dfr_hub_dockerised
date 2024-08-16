@@ -34,12 +34,14 @@ services:
     image: redis:latest
     ports:
       - 6379:6379
-  nginx:
-    container_name: nginx
+  loadbalancer:
+    container_name: loadbalancer
     image: nginx:latest
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
     ports:
       - "80:80"
     depends_on:
       - express_server
+      - next_app
