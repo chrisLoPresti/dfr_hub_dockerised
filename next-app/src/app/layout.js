@@ -24,6 +24,7 @@ export default async function RootLayout({ children }) {
 
     try {
       const res = await apiInstance.get("/api/auth/loaduserfromsession", {
+        baseURL: process.env.NEXT_PUBLIC_SERVER_SIDE_API_ENDPOINT,
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
@@ -32,7 +33,6 @@ export default async function RootLayout({ children }) {
       });
       return { user: res.data, sessionCookie };
     } catch (e) {
-      console.log(e);
       return { user: null, sessionCookie };
     }
   };

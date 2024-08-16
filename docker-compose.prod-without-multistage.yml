@@ -12,6 +12,10 @@ services:
     restart: always
     ports:
       - 3000:3000
+    depends_on:
+      - "express_server"
+    links:
+      - express_server
     networks:
       - my_network
 
