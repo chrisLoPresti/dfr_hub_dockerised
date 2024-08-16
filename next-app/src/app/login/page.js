@@ -29,8 +29,8 @@ function LoginPage() {
   };
   useEffect(() => {
     if (user) {
-      // const redirect = searchParams?.get("redirect") ?? "/map";
-      // router.push(redirect);
+      const redirect = searchParams?.get("redirect") ?? "/map";
+      router.push(redirect);
     }
   }, [user]);
 

@@ -9,14 +9,8 @@ const { createAdapter } = require("@socket.io/redis-adapter");
 const { createClient } = require("redis");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
-const serverName = "OPTCG-BACKEND";
 const app = express();
-app.use(
-  cors({
-    credentials: true,
-    origin: "http://localhost:3000",
-  })
-);
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookies());
@@ -25,7 +19,7 @@ app.use(router);
 const server = http.createServer(app);
 const io = require("socket.io")(server, {
   cors: {
-    origin: "*",
+    origin: "http://localhost:3000/", // Allowing front-end running port 3000
   },
 });
 
@@ -56,9 +50,10 @@ io.on("connection", (socket) => {
       ({ userId }) => userId === message.user
     );
     if (existingUserSocket) {
-      existingUserSocket.emit("new-session-started", {
-        message: "You are already logged in on another device",
-      });
+      cosole.log("existing socker for user: ", existingUserSocket.id);
+      // existingUserSocket.emit("new-session-started", {
+      //   message: "You are already logged in on another device",
+      // });
     }
     socket.userId = message.user;
   });

@@ -33,7 +33,6 @@ export default async function RootLayout({ children }) {
       });
       return { user: res.data, sessionCookie };
     } catch (e) {
-      console.log(e);
       return { user: null, sessionCookie };
     }
   };
