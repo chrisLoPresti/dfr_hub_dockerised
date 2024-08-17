@@ -1,7 +1,7 @@
 const { default: axios } = require("axios");
 
 export const apiOptions = {
-  baseURL: "http://localhost:5000", //process.env.NEXT_PUBLIC_API_ENDPOINT;,
+  baseURL: process.env.NEXT_PUBLIC_API_ENDPOINT,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -39,7 +39,7 @@ apiInstance.interceptors.response.use(
           }
         });
     }
-    window.location.href = "/logout";
+    window.location.href = "/login";
     // Return the original error if we can't handle it
     return Promise.reject(error);
   }

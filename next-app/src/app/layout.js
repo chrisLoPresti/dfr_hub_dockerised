@@ -5,7 +5,6 @@ import Tooltip from "@/components/atoms/Tooltip";
 import { apiInstance, apiOptions } from "@/lib/api";
 import { cookies } from "next/headers";
 import { AuthProvider } from "@/providers/auth/AuthProvider";
-import { useMemo } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 

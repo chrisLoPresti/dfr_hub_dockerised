@@ -44,13 +44,6 @@ export const AuthProvider = ({ children, session }) => {
 
     redirect(`/login?redirect=${encodeURI(`${pathname}${searches}`)}`);
   }
-  // }, [pathname, storeRef.current.getState().user]);
-
-  // useEffect(() => {
-  //   if (!storeRef.current.getState().user) {
-  //     storeRef.current.getState().logout();
-  //   }
-  // }, [storeRef.current.getState().user]);
 
   return (
     <AuthContext.Provider value={storeRef.current}>
