@@ -173,7 +173,9 @@ const useMapMarkers = () => {
   }, [markers, selectedMapMarker]);
 
   useEffect(() => {
-    const updateMarkers = () => mutate();
+    const updateMarkers = () => {
+      mutate();
+    };
 
     socket?.on("markers-updated", updateMarkers);
     return () => {

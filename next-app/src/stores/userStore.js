@@ -37,6 +37,7 @@ const createUserStore = (initialState) => {
       try {
         await apiInstance.post("/api/auth/logout");
         set({ ...initialState, loading: false });
+        window.location.href = "/login";
       } catch {
         set((state) => ({
           ...state,

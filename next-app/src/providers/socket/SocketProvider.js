@@ -16,9 +16,9 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     // socket.connect();
-    if (socket.connected) {
-      onConnect();
-    }
+    // if (socket.connected) {
+    //   // onConnect();
+    // }
 
     function onConnect() {
       setIsConnected(true);
@@ -27,6 +27,7 @@ export const SocketProvider = ({ children }) => {
       socket.io.engine.on("upgrade", (transport) => {
         setTransport(transport.name);
       });
+
       socket.emit("user-connected", { user: user._id });
     }
 
@@ -42,12 +43,12 @@ export const SocketProvider = ({ children }) => {
     }
 
     socket.on("connect", onConnect);
-    socket.on("new-session-started", duplicateUser);
+    socket.on("duplicate-session-started", duplicateUser);
     socket.on("disconnect", onDisconnect);
 
     return () => {
       socket.off("connect", onConnect);
-      socket.off("new-session-started", duplicateUser);
+      socket.off("duplicate-session-started", duplicateUser);
       socket.off("disconnect", onDisconnect);
     };
   }, []);

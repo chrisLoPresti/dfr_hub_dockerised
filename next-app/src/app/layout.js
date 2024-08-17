@@ -16,12 +16,10 @@ export const metadata = {
 
 const loadUserFromSession = async () => {
   "use server";
-  console.log(typeof window);
   if (typeof window !== "undefined") {
     return;
   }
 
-  console.log("here!!");
   const sessionCookie = cookies().get("dfr_hub_session");
   if (!sessionCookie) {
     return { user: null, sessionCookie };

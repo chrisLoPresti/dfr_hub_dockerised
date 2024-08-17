@@ -17,23 +17,17 @@ apiInstance.interceptors.response.use(
     const originalRequest = error.config;
     // If the error is a 401 and we have a refresh token, refresh the JWT token
     if (error?.response?.status === 401) {
+      const { baseURL, ...rest } = apiOptions;
       axios
-        .get(`${baseURL}/api/auth/refreshtoken`, {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
+        .get(`${baseURL}/api/auth/refreshtoken`, { rest })
         .then((response) => {
           // Re-run the original request that was intercepted
           apiInstance(originalRequest)
             .then((response) => {
-              // return response.data;
+              return response;
             })
             .catch((error) => {
               if (typeof window !== "undefined") {
-                console.log("womp womp: ", error);
-
                 window.location.href = "/logout";
               }
             });
@@ -41,13 +35,11 @@ apiInstance.interceptors.response.use(
         .catch((error) => {
           // If there is an error refreshing the token, log out the user\
           if (typeof window !== "undefined") {
-            console.log("womp womp 2 ", error);
-
             window.location.href = "/logout";
           }
         });
     }
-
+    window.location.href = "/logout";
     // Return the original error if we can't handle it
     return Promise.reject(error);
   }

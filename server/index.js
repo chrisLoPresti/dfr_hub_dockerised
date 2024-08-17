@@ -55,13 +55,14 @@ io.on("connection", (socket) => {
 
   socket.on("user-connected", async (message) => {
     const sockets = await io.fetchSockets();
+    console.log(sockets.map(({ id }) => id));
     const existingUserSocket = sockets.find(
       ({ userId }) => userId === message.user
     );
     if (existingUserSocket) {
-      // existingUserSocket.emit("new-session-started", {
-      //   message: "You are already logged in on another device",
-      // });
+      existingUserSocket.emit("duplicate-session-started", {
+        message: "You are already logged in on another device",
+      });
     }
     socket.userId = message.user;
   });

@@ -27,7 +27,6 @@ function LoginPage() {
   const handleChangeEmail = (email) => {
     setCredentials({ ...credentials, email });
   };
-  console.log(user);
 
   useEffect(() => {
     if (user) {
