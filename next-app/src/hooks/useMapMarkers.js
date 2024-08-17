@@ -12,7 +12,6 @@ const useMapMarkers = () => {
     const { data } = await apiInstance.get(url);
     return data;
   };
-
   const markerColors = {
     blue: themeConfig.theme.extend.colors["blue-annotation"],
     yellow: themeConfig.theme.extend.colors["yellow-annotation"],
@@ -92,7 +91,7 @@ const useMapMarkers = () => {
         return null;
       }
     },
-    [markers, elevator, defaultMarkerColor, socket]
+    [markers, elevator, defaultMarkerColor, socket.id]
   );
 
   const deleteMapMarker = useCallback(
@@ -118,7 +117,7 @@ const useMapMarkers = () => {
         return null;
       }
     },
-    [markers, socket]
+    [markers, socket.id]
   );
 
   const updateMapMarker = useCallback(
@@ -154,7 +153,7 @@ const useMapMarkers = () => {
         return null;
       }
     },
-    [markers, selectedMapMarker, socket]
+    [markers, selectedMapMarker, socket.id]
   );
 
   const selectMapMarker = (marker) => {

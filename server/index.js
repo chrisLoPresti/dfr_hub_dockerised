@@ -10,7 +10,12 @@ const { createClient } = require("redis");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
 const app = express();
-app.use(cors({ credentials: true, origin: "http://localhost:3000/" }));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -20,9 +25,12 @@ app.use(router);
 const server = http.createServer(app);
 const io = require("socket.io")(server, {
   cors: {
-    origin: "http://localhost:3000/", // Allowing front-end running port 3000
+    origin: "http://localhost:3000", // Allowing front-end running port 3000
+    methods: ["GET", "POST"],
+    credentials: true,
   },
 });
+app.set("io", io);
 
 const dataBase = process.env.MONGODB_URI;
 mongoose
@@ -51,7 +59,6 @@ io.on("connection", (socket) => {
       ({ userId }) => userId === message.user
     );
     if (existingUserSocket) {
-      cosole.log("existing socker for user: ", existingUserSocket.id);
       // existingUserSocket.emit("new-session-started", {
       //   message: "You are already logged in on another device",
       // });

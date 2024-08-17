@@ -15,6 +15,7 @@ export const SocketProvider = ({ children }) => {
   const { user, logout } = useAuth();
 
   useEffect(() => {
+    // socket.connect();
     if (socket.connected) {
       onConnect();
     }

@@ -16,13 +16,7 @@ const createUserStore = (initialState) => {
     login: async (credentials) => {
       set((state) => ({ ...state, loading: true }));
       try {
-        const { data } = await apiInstance.post(
-          "/api/auth/login",
-          credentials,
-          {
-            withCredentials: true,
-          }
-        );
+        const { data } = await apiInstance.post("/api/auth/login", credentials);
         set((state) => ({
           ...state,
           user: data,
@@ -50,6 +44,7 @@ const createUserStore = (initialState) => {
         }));
       }
     },
+    setUser: (user) => set((state) => ({ ...state, user })),
   }));
 };
 

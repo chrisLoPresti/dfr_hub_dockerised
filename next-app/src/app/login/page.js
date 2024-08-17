@@ -27,6 +27,8 @@ function LoginPage() {
   const handleChangeEmail = (email) => {
     setCredentials({ ...credentials, email });
   };
+  console.log(user);
+
   useEffect(() => {
     if (user) {
       const redirect = searchParams?.get("redirect") ?? "/map";

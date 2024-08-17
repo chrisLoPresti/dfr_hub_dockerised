@@ -17,7 +17,7 @@ exports.getmarkers = async (req, res, next) => {
 };
 
 exports.createmarker = async (req, res, next) => {
-  const io = req.app.get("socketio");
+  const io = req.app.get("io");
   const socket = req.socket;
   try {
     const marker = req.body;
@@ -48,7 +48,7 @@ exports.createmarker = async (req, res, next) => {
 };
 
 exports.updatemarker = async (req, res, next) => {
-  const io = req.app.get("socketio");
+  const io = req.app.get("io");
   const socket = req.socket;
   try {
     const { created_by, _id, ...marker } = req.body;
@@ -64,7 +64,6 @@ exports.updatemarker = async (req, res, next) => {
     res.status(200).json({ ...updatedMarker._doc, created_by });
   } catch (e) {
     let message = "Unable to update map marker!";
-    console.log(e);
     if (e.code === 11000) {
       message = `A marker with the name '${req.body.name}' already exists!`;
     }
@@ -75,7 +74,7 @@ exports.updatemarker = async (req, res, next) => {
 };
 
 exports.deletemarker = async (req, res, next) => {
-  const io = req.app.get("socketio");
+  const io = req.app.get("io");
   const socket = req.socket;
   try {
     const marker = req.body;

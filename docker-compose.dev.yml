@@ -20,6 +20,9 @@ services:
       - express_server
     links:
       - express_server
+    networks:
+      - app-network
+
   express_server:
     container_name: express_server
     build:
@@ -29,11 +32,17 @@ services:
       - ./server:/app
     ports:
       - 5000:5000
+    networks:
+      - app-network
+
   redis:
     container_name: redis
     image: redis:latest
     ports:
       - 6379:6379
+    networks:
+      - app-network
+
   loadbalancer:
     container_name: loadbalancer
     image: nginx:latest
@@ -45,3 +54,9 @@ services:
     depends_on:
       - express_server
       - next_app
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

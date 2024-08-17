@@ -1,14 +1,15 @@
 const { default: axios } = require("axios");
 
-const baseURL = process.env.NEXT_PUBLIC_API_ENDPOINT;
-
-export const apiInstance = axios.create({
-  baseURL,
+export const apiOptions = {
+  baseURL: "http://localhost:5000", //process.env.NEXT_PUBLIC_API_ENDPOINT;,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "http://localhost:3000",
   },
-});
+};
+
+export const apiInstance = axios.create(apiOptions);
 
 apiInstance.interceptors.response.use(
   (response) => response,
