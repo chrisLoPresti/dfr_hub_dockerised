@@ -59,6 +59,7 @@ const Annotations = ({ visible }) => {
               checkedMarkers.length !== 0 &&
               checkedMarkers.length === markers.length,
           })}
+          disabled={!markers.length}
           borderColor="white"
           icon={<TbCheck className="text-white" />}
           size={16}
