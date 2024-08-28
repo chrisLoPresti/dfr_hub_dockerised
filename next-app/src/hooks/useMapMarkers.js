@@ -5,6 +5,7 @@ import { useMapStore } from "@/stores/mapStore";
 import { apiInstance } from "@/lib/api";
 import { useCallback, useEffect } from "react";
 import { useMapMarkerStore } from "@/stores/mapMarkerStore";
+import axios from "axios";
 import { useSocket } from "./useSocket";
 
 const useMapMarkers = () => {
@@ -33,14 +34,12 @@ const useMapMarkers = () => {
     setDefaultMarkerColor,
     setSelectedMapMarker,
   } = useMapMarkerStore();
-
+  const { on, off } = useSocket();
   const {
     data: markers = [],
     isLoading,
     mutate,
   } = useSWR("/api/markers/getmarkers", (url) => fetcher(url));
-
-  const { socket } = useSocket();
 
   const createNewMapMarker = useCallback(
     async ({ selectedDevice, ...marker }) => {
@@ -53,34 +52,37 @@ const useMapMarkers = () => {
 
         const elevation = results[0].elevation;
         marker.position.elevation = elevation;
-        // const res = await axios.post(
-        //   "https://nj.unmannedlive.com/dfr/newcall",
-        //   {
-        //     ...marker,
-        //     lat: marker.position.lat,
-        //     lon: marker.position.lng,
-        //     z:  marker.position.elevation,
-        //     workspaceid: selectedDevice.workspace_id,
-        //     sn: selectedDevice.serial_number,
-        //   },
-        //   {
-        //     withCredentials: false,
-        //   }
-        // );
-        // if (res.status === 201) {
-        const { data: newMarker } = await apiInstance.post(
-          `/api/markers/createmarker`,
+        const res = await axios.post(
+          "https://nj.unmannedlive.com/dfr/newcall",
           {
             ...marker,
-            color: marker.color || defaultMarkerColor,
-            socket: socket?.id,
+            lat: marker.position.lat,
+            lon: marker.position.lng,
+            z: marker.position.elevation,
+            workspaceid: selectedDevice.workspace_id,
+            sn: selectedDevice.serial_number,
+          },
+          {
+            withCredentials: false,
+            "Access-Control-Allow-Origin": "*",
           }
         );
-        successToast(`Successfully created Map Marker: ${newMarker.name}!`);
-        mutate([...markers, newMarker]);
-        centerMap(newMarker.position);
-        toggleAPILoading();
-        return newMarker;
+        if (res.status === 201) {
+          const { data: newMarker } = await apiInstance.post(
+            `/api/markers/createmarker`,
+            {
+              ...marker,
+              color: marker.color || defaultMarkerColor,
+              workspace_id: selectedDevice.workspace_id,
+              sn: selectedDevice.serial_number,
+            }
+          );
+          successToast(`Successfully created Map Marker: ${newMarker.name}!`);
+          mutate([...markers, newMarker]);
+          centerMap(newMarker.position);
+          toggleAPILoading();
+          return newMarker;
+        }
       } catch ({
         response: {
           data: { message },
@@ -91,7 +93,7 @@ const useMapMarkers = () => {
         return null;
       }
     },
-    [markers, elevator, defaultMarkerColor, socket.id]
+    [markers, elevator, defaultMarkerColor]
   );
 
   const deleteMapMarker = useCallback(
@@ -100,7 +102,7 @@ const useMapMarkers = () => {
         toggleAPILoading();
 
         const { data } = await apiInstance.delete(`/api/markers/deletemarker`, {
-          data: { ...marker, socket: socket?.id },
+          data: marker,
         });
         successToast(`Successfully deleted Map Marker: ${marker.name}`);
         mutate([...markers.filter(({ name }) => name !== marker.name)]);
@@ -117,7 +119,7 @@ const useMapMarkers = () => {
         return null;
       }
     },
-    [markers, socket.id]
+    [markers]
   );
 
   const updateMapMarker = useCallback(
@@ -126,7 +128,7 @@ const useMapMarkers = () => {
         toggleAPILoading();
         const { data: updatedMarker } = await apiInstance.put(
           `/api/markers/updatemarker`,
-          { ...marker, socket: socket?.id }
+          marker
         );
         successToast(`Successfully updated Map Marker: ${updatedMarker.name}`);
 
@@ -153,7 +155,7 @@ const useMapMarkers = () => {
         return null;
       }
     },
-    [markers, selectedMapMarker, socket.id]
+    [markers, selectedMapMarker]
   );
 
   const selectMapMarker = (marker) => {
@@ -176,12 +178,11 @@ const useMapMarkers = () => {
     const updateMarkers = () => {
       mutate();
     };
-
-    socket?.on("markers-updated", updateMarkers);
+    on("markers-updated", updateMarkers);
     return () => {
-      socket?.off("markers-updated", updateMarkers);
+      off("markers-updated", updateMarkers);
     };
-  }, []);
+  }, [on, off]);
 
   return {
     isAPILoading,

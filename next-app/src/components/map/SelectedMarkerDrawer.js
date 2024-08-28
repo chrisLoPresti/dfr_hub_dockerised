@@ -104,7 +104,7 @@ const SelectedMarkerDrawer = () => {
         "w-72 opacity-100": selectedMapMarker,
       })}
     >
-      <div className="h-full p-5 w-72 bg-tertiary flex flex-col gap-y-2 bg-slate-700">
+      <div className="h-full p-5 w-72 bg-slate-700 flex flex-col gap-y-2 bg-slate-700">
         <div className="flex justify-center items-center">
           <label className="text-white" htmlFor="selected-marker-name">
             Selected Map Marker

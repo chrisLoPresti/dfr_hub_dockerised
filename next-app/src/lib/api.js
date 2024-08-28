@@ -39,7 +39,7 @@ apiInstance.interceptors.response.use(
           }
         });
     }
-    window.location.href = "/login";
+    // window.location.href = "/login";
     // Return the original error if we can't handle it
     return Promise.reject(error);
   }

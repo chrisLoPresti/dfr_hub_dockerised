@@ -7,6 +7,7 @@ import classNames from "classnames";
 import Annotations from "./Annotaions";
 import { useCallback, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import Devices from "./Devices";
 
 const SideNavigation = () => {
   const searchParams = useSearchParams();
@@ -77,9 +78,9 @@ const SideNavigation = () => {
             <BiLogOut className="text-2xl" />
           </button>
         </ul>
-        <div className="h-full w-10/12 overflow-auto scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar scrollbar-thumb-slate-700 scrollbar-track-tertiary scrollbar-thin">
+        <div className="h-full w-10/12 overflow-auto scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar scrollbar-thumb-slate-700 scrollbar-track-slate-700 scrollbar-thin">
           <Annotations visible={searchParams.get("view") === "annotations"} />
-          {/*  <Devices visible={searchParams.get("view") === "devices"} /> */}
+          <Devices visible={searchParams.get("view") === "devices"} />
         </div>
       </div>
     </div>

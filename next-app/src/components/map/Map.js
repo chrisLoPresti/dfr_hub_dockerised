@@ -15,6 +15,10 @@ import { useGeolocated } from "react-geolocated";
 import { useMapStore } from "@/stores/mapStore";
 import useMapMarkers from "@/hooks/useMapMarkers";
 import Image from "next/image";
+import { useDeviceContext } from "@/providers/devices/DevicesProvider";
+import LiveStream from "./LiveStream";
+import DroneMarker from "./DroneMarker";
+import { useSocket } from "@/hooks/useSocket";
 
 const libraries = ["places"];
 
@@ -37,16 +41,16 @@ export const Map = () => {
   const {
     createNewMapMarker,
     selectMapMarker,
-    defaultMarkerColor,
     markers,
     isLoading,
     canCreateMapMarkers,
   } = useMapMarkers();
 
   const [searchBox, setSearchBox] = useState(null);
-  //   const [liveStreamLink, setLiveStreamLink] = useState(null);
-
-  //   const { selectedDevice } = useDeviceContext();
+  const [liveStreamLink, setLiveStreamLink] = useState(null);
+  const { selectedDevice } = useDeviceContext();
+  const { connect, on, off } = useSocket();
+  const [realTimeDroneData, setRealTimeDroneData] = useState({});
 
   const onMapLoad = (map) => {
     setMap(map);
@@ -72,14 +76,10 @@ export const Map = () => {
         lat: latLng.lat(),
         lng: latLng.lng(),
       },
-      workspace_id: "030a6a94-3c84-11ef-8ace-570f0d051196",
-      // selectedDevice,
+      // workspace_id: "030a6a94-3c84-11ef-8ace-570f0d051196",
+      selectedDevice,
     });
-  }, [
-    searchBox,
-    createNewMapMarker,
-    // selectedDevice
-  ]);
+  }, [searchBox, createNewMapMarker, selectedDevice]);
 
   const dropMarker = useCallback(
     async ({ latLng, name }) => {
@@ -90,8 +90,8 @@ export const Map = () => {
             lat: latLng.lat(),
             lng: latLng.lng(),
           },
-          workspace_id: "030a6a94-3c84-11ef-8ace-570f0d051196",
-          // selectedDevice: selectedDevice,
+          // workspace_id: "030a6a94-3c84-11ef-8ace-570f0d051196",
+          selectedDevice: selectedDevice,
         };
 
         const newMarker = await createNewMapMarker(marker);
@@ -105,13 +105,13 @@ export const Map = () => {
       canCreateMapMarkers,
       isLoading,
       elevator,
-      // selectedDevice,
+      selectedDevice,
     ]
   );
 
-  //   const closeLiveStreamLink = () => {
-  //     setLiveStreamLink(null);
-  //   };
+  const closeLiveStreamLink = () => {
+    setLiveStreamLink(null);
+  };
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -140,6 +140,18 @@ export const Map = () => {
     });
   }, [coords, centerMap]);
 
+  const messageHandler = (message) => {
+    setRealTimeDroneData(JSON.parse(message));
+  };
+
+  useEffect(() => {
+    connect();
+    on("real-time-update", messageHandler);
+    return () => {
+      off("real-time-update", messageHandler);
+    };
+  }, [on, off]);
+
   return isLoaded ? (
     <>
       <GoogleMap
@@ -160,6 +172,7 @@ export const Map = () => {
         }}
       >
         <>
+          <DroneMarker droneData={realTimeDroneData} />
           {markers.map((marker) => (
             <MapMarker key={marker._id} marker={marker} />
           ))}
@@ -176,11 +189,7 @@ export const Map = () => {
             className="overflow-ellipses outline-none w-96 h-27 absolute top-2.5 p-2 rounded-sm shadow-lg right-2 z-20"
           />
         </StandaloneSearchBox>
-        {/* <>
-  
-       
-       
-         
+        <>
           {selectedDevice && (
             <div
               className="absolute top-24 left-2.5 text-xs text-white w-30 flex gap-y-2 items-center justify-center flex-col bg-slate-700 bg-opacity-90  rounded-md p-5"
@@ -203,7 +212,7 @@ export const Map = () => {
                 {selectedDevice?.serial_number}
               </div>
               <button
-                className="rounded-md bg-tertiary p-2 w-full"
+                className="rounded-md bg-slate-900 p-2 w-full"
                 onClick={() =>
                   setLiveStreamLink(
                     `https://unmannedar.com/getlive.html?key=${selectedDevice?.stream_id}`
@@ -218,7 +227,7 @@ export const Map = () => {
             endPoint={liveStreamLink}
             closeEndpoint={closeLiveStreamLink}
           />
-        </> */}
+        </>
       </GoogleMap>
       <SelectedMarkerDrawer />
     </>

@@ -1,69 +1,87 @@
 "use client";
 
 import { warnToast } from "@/components/atoms/Toast";
-import { createContext, useCallback, useEffect, useState } from "react";
-import { socket } from "@/lib/socket";
+import { createContext, useCallback, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import throttle from "lodash/throttle";
+import { io } from "socket.io-client";
+
+// "undefined" means the URL will be computed from the `window.location` object
+const URL = process.env.NEXT_PUBLIC_API_ENDPOINT;
 
 export const SocketContext = createContext({
   socket: null,
 });
 
 export const SocketProvider = ({ children }) => {
+  const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [transport, setTransport] = useState("N/A");
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
-  const logoutDuplicateUser = useCallback(() => {
-    warnToast("Another user has logged in with these credentials");
-    setTimeout(() => {
-      logout();
-      socket.disconnect();
-    }, 3000);
-  }, [socket, logout]);
-
-  const throttleLogoutDuplicateUser = throttle(() => {
-    logoutDuplicateUser();
-  }, 3000);
-
-  useEffect(() => {
-    // socket.connect();
-    if (socket.connected) {
-      onConnect();
-    }
-
-    function onConnect() {
-      setIsConnected(true);
-      setTransport(socket.io.engine.transport.name);
-
-      socket.io.engine.on("upgrade", (transport) => {
-        setTransport(transport.name);
+  const connect = useCallback(() => {
+    if (!socket) {
+      const socketIo = io(URL, {
+        withCredentials: true,
+        cors: {
+          origin: "*",
+        },
       });
 
-      socket.emit("user-connected", { user: user._id });
-    }
+      setSocket(socketIo);
 
-    function onDisconnect() {
+      socketIo.on("connect", () => {
+        setIsConnected(true);
+      });
+
+      socketIo.on("disconnect", () => {
+        setIsConnected(false);
+      });
+    }
+  }, [socket, user]);
+
+  const disconnect = useCallback(() => {
+    if (socket) {
+      socket.disconnect();
+      setSocket(null);
       setIsConnected(false);
-      setTransport("N/A");
     }
+  }, [socket]);
 
-    socket.on("connect", onConnect);
-    socket.on("duplicate-session-started", throttleLogoutDuplicateUser);
-    socket.on("disconnect", onDisconnect);
+  const emit = useCallback(
+    (event, data) => {
+      if (socket) {
+        socket.emit(event, data);
+      }
+    },
+    [socket]
+  );
 
-    return () => {
-      socket.off("connect", onConnect);
-      socket.off("duplicate-session-started", throttleLogoutDuplicateUser);
-      socket.off("disconnect", onDisconnect);
-    };
-  }, []);
+  const on = useCallback(
+    (event, callback) => {
+      if (socket) {
+        socket.on(event, callback);
+      }
+    },
+    [socket]
+  );
+
+  const off = useCallback(
+    (event, callback) => {
+      if (socket) {
+        socket.off(event, callback);
+      }
+    },
+    [socket]
+  );
 
   return (
     <SocketContext.Provider
       value={{
-        socket,
+        connect,
+        disconnect,
+        emit,
+        on,
+        off,
+        isConnected,
       }}
     >
       {children}

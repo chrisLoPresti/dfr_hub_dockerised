@@ -7,6 +7,10 @@ const cookies = require("cookie-parser");
 const cors = require("cors");
 const { createAdapter } = require("@socket.io/redis-adapter");
 const { createClient } = require("redis");
+const mqtt = require("mqtt");
+const { setIO } = require("./lib/socket");
+const { setMQTT } = require("./lib/mqtt");
+
 require("dotenv").config();
 const port = process.env.PORT || 5000;
 const app = express();
@@ -30,6 +34,7 @@ const io = require("socket.io")(server, {
     credentials: true,
   },
 });
+setIO(io);
 app.set("io", io);
 
 const dataBase = process.env.MONGODB_URI;
@@ -45,85 +50,10 @@ const pubClient = createClient({ host: "redis", port: 6379 }).on(
 const subClient = pubClient.duplicate();
 
 io.adapter(createAdapter(pubClient, subClient));
-
-// Chatroom
-
-let numUsers = 0;
-
-io.on("connection", (socket) => {
-  console.log(`a user connected with socket id: ${socket.id}`);
-
-  socket.on("user-connected", async (message) => {
-    const sockets = await io.fetchSockets();
-    const existingUserSocket = sockets.find(({ userId, id }) => {
-      return userId === message.user && id !== socket.id;
-    });
-    console.log(sockets.map(({ userId }) => userId));
-    if (existingUserSocket) {
-      existingUserSocket.emit("duplicate-session-started", {
-        message: "You are already logged in on another device",
-      });
-    }
-    socket.userId = message.user;
-  });
-
-  let addedUser = false;
-
-  // when the client emits 'new message', this listens and executes
-  socket.on("new message", (data) => {
-    // we tell the client to execute 'new message'
-    socket.broadcast.emit("new message", {
-      username: socket.username,
-      message: data,
-    });
-  });
-
-  // when the client emits 'add user', this listens and executes
-  socket.on("add user", (username) => {
-    if (addedUser) return;
-
-    // we store the username in the socket session for this client
-    socket.username = username;
-    ++numUsers;
-    addedUser = true;
-    socket.emit("login", {
-      numUsers: numUsers,
-    });
-    // echo globally (all clients) that a person has connected
-    socket.broadcast.emit("user joined", {
-      username: socket.username,
-      numUsers: numUsers,
-    });
-  });
-
-  // when the client emits 'typing', we broadcast it to others
-  socket.on("typing", () => {
-    socket.broadcast.emit("typing", {
-      username: socket.username,
-    });
-  });
-
-  // when the client emits 'stop typing', we broadcast it to others
-  socket.on("stop typing", () => {
-    socket.broadcast.emit("stop typing", {
-      username: socket.username,
-    });
-  });
-
-  // when the user disconnects.. perform this
-  socket.on("disconnect", () => {
-    console.log("user disconnected: ", socket.userId);
-    if (addedUser) {
-      --numUsers;
-
-      // echo globally that this client has left
-      socket.broadcast.emit("user left", {
-        username: socket.username,
-        numUsers: numUsers,
-      });
-    }
-  });
-});
+require("./lib/socketHandler")(io);
+const mqttClient = mqtt.connect("mqtt://nj.unmannedlive.com:1883");
+setMQTT(mqttClient);
+require("./lib/mqttHandler")(mqttClient);
 
 server.listen(port, () => {
   console.log(`listening on *:${port}`);
