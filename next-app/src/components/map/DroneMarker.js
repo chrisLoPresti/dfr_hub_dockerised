@@ -11,8 +11,6 @@ const DroneMarker = ({ droneData }) => {
     return normalizedHeading;
   };
 
-  console.log(droneData);
-
   return (
     droneData && (
       <div>

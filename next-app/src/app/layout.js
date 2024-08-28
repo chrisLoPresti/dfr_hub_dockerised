@@ -2,9 +2,10 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import ToastContainer from "@/components/atoms/Toast";
 import Tooltip from "@/components/atoms/Tooltip";
-import { apiInstance, apiOptions } from "@/lib/api";
+import { apiOptions } from "@/lib/api";
 import { cookies } from "next/headers";
 import { AuthProvider } from "@/providers/auth/AuthProvider";
+import axios from "axios";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +26,7 @@ const loadUserFromSession = async () => {
   }
 
   try {
-    const res = await apiInstance.get("/api/auth/loaduserfromsession", {
+    const res = await axios.get("/api/auth/loaduserfromsession", {
       ...apiOptions,
       baseURL: process.env.NEXT_PUBLIC_LOAD_BALANCER,
       headers: {

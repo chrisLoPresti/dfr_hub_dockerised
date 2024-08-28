@@ -173,7 +173,7 @@ export const Map = () => {
       >
         <>
           <DroneMarker droneData={realTimeDroneData} />
-          {markers.map((marker) => (
+          {markers?.map((marker) => (
             <MapMarker key={marker._id} marker={marker} />
           ))}
           <CreatePinPointButton />

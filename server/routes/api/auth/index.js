@@ -7,6 +7,11 @@ const options = {
   sameSite: "Strict",
 };
 
+const inFifteenDays = () => {
+  //24 hours * 60 min * 60 seconds * 1000 milisec = 1 day * 15 = 15 days
+  return new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 15);
+};
+
 const generateSessionToken = async (userId) => {
   try {
     // Find the user by ID in the database
@@ -35,18 +40,24 @@ exports.register = async (req, res, next) => {
   }
 
   try {
-    await User.create({
+    const newUser = await User.create({
       first_name,
       last_name,
       email: email.toLowerCase(),
       phone,
       password,
-    }).then(({ _doc: { password, refreshToken, ...user } }) =>
-      res.status(200).json({
-        message: "User successfully created",
-        user,
+    });
+    const { sessionToken } = await generateSessionToken(newUser._id);
+
+    delete newUser._doc.password;
+    delete newUser._doc.sessionToken;
+    res
+      .status(200)
+      .cookie("dfr_hub_session", sessionToken, {
+        ...options,
+        expires: inFifteenDays(),
       })
-    );
+      .json(newUser);
   } catch ({ errorResponse }) {
     let error = "";
     if (errorResponse.code === 11000) {
@@ -85,7 +96,13 @@ exports.login = async (req, res, next) => {
     delete user._doc.password;
     delete user._doc.sessionToken;
 
-    res.status(200).cookie("dfr_hub_session", sessionToken, options).json(user);
+    res
+      .status(200)
+      .cookie("dfr_hub_session", sessionToken, {
+        ...options,
+        expires: inFifteenDays(),
+      })
+      .json(user);
   } catch (e) {
     res.status(400).json({
       message: e,
@@ -143,7 +160,10 @@ exports.refreshtoken = async (req, res, next) => {
     // Set the new tokens in cookies
     return res
       .status(200)
-      .cookie("dfr_hub_session", sessionToken, options)
+      .cookie("dfr_hub_session", sessionToken, {
+        ...options,
+        expires: inFifteenDays(),
+      })
       .json(user);
   } catch (error) {
     // Handle any errors during token refresh with a 500 Internal Server Error status
@@ -181,7 +201,10 @@ exports.loaduserfromsession = async (req, res, next) => {
     // Set the new tokens in cookies
     return res
       .status(200)
-      .cookie("dfr_hub_session", incomingSessionToken, options)
+      .cookie("dfr_hub_session", incomingSessionToken, {
+        ...options,
+        expires: inFifteenDays(),
+      })
       .json(user);
   } catch (error) {
     // Handle any errors during token refresh with a 500 Internal Server Error status

@@ -79,10 +79,7 @@ UserSchema.methods.generateSessionToken = function (accessToken) {
       user: { _id: this._id.toString(), email: this.email },
       accessToken,
     },
-    process.env.REFRESH_TOKEN_SECRET,
-    {
-      expiresIn: "15d",
-    }
+    process.env.REFRESH_TOKEN_SECRET
   );
 };
 

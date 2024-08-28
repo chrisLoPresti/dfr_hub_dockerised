@@ -10,7 +10,6 @@ exports.verifyJWT = async (req, res, next) => {
     if (!sessionToken) {
       return res.status(401).json({ message: "No permission" });
     }
-
     // Check if the token is valid using a secret key
     const decodedSessionToken = jwt.verify(
       sessionToken,
@@ -20,12 +19,10 @@ exports.verifyJWT = async (req, res, next) => {
       decodedSessionToken.accessToken,
       process.env.ACCESS_TOKEN_SECRET
     );
-
     // Get the user linked to the token
     const user = await User.findById(decodedSessionToken?.user?._id).select(
       "-password -sessionToken"
     );
-
     // If the user isn't found, deny access with a 404 Not Found status
     if (!user) {
       return res.status(404).json({ message: "User not found" });
