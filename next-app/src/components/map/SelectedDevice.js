@@ -86,6 +86,8 @@ const SelectedDevice = ({ realTimeDroneData }) => {
 
   const heading = normalizeHeading(realTimeDroneData?.data?.attitude_head ?? 0);
 
+  console.log(realTimeDroneData);
+
   return (
     selectedDevice && (
       <Draggable
@@ -376,7 +378,7 @@ const SelectedDevice = ({ realTimeDroneData }) => {
                       </p>
                       <p
                         className="truncate w-1/4 p-1"
-                        data-tooltip-content="Height above ground level"
+                        data-tooltip-content="Horizontal Speed"
                         data-tooltip-id="tooltip"
                       >
                         HS:{" "}
@@ -391,7 +393,7 @@ const SelectedDevice = ({ realTimeDroneData }) => {
                       </p>
                       <p
                         className="truncate w-1/4 p-1"
-                        data-tooltip-content="Height above ground level"
+                        data-tooltip-content="Vertical Speed"
                         data-tooltip-id="tooltip"
                       >
                         VS:{" "}
