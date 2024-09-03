@@ -12,7 +12,7 @@ const DroneMarker = ({ droneData }) => {
   };
 
   return (
-    droneData && (
+    droneData?.data?.latitude && (
       <div>
         <Marker
           position={{
@@ -47,6 +47,7 @@ const DroneMarker = ({ droneData }) => {
           }}
           draggable={false}
         />
+
         <Polyline
           path={[
             {

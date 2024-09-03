@@ -16,7 +16,7 @@ import { useMapStore } from "@/stores/mapStore";
 import useMapMarkers from "@/hooks/useMapMarkers";
 import Image from "next/image";
 import { useDeviceContext } from "@/providers/devices/DevicesProvider";
-import LiveStream from "./LiveStream";
+import SelectedDevice from "./SelectedDevice";
 import DroneMarker from "./DroneMarker";
 import { useSocket } from "@/hooks/useSocket";
 
@@ -47,7 +47,6 @@ export const Map = () => {
   } = useMapMarkers();
 
   const [searchBox, setSearchBox] = useState(null);
-  const [liveStreamLink, setLiveStreamLink] = useState(null);
   const { selectedDevice } = useDeviceContext();
   const { connect, on, off } = useSocket();
   const [realTimeDroneData, setRealTimeDroneData] = useState({});
@@ -109,10 +108,6 @@ export const Map = () => {
     ]
   );
 
-  const closeLiveStreamLink = () => {
-    setLiveStreamLink(null);
-  };
-
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_API || "",
@@ -172,7 +167,7 @@ export const Map = () => {
         }}
       >
         <>
-          <DroneMarker droneData={realTimeDroneData} />
+          {selectedDevice && <DroneMarker droneData={realTimeDroneData} />}
           {markers?.map((marker) => (
             <MapMarker key={marker._id} marker={marker} />
           ))}
@@ -190,43 +185,7 @@ export const Map = () => {
           />
         </StandaloneSearchBox>
         <>
-          {selectedDevice && (
-            <div
-              className="absolute top-24 left-2.5 text-xs text-white w-30 flex gap-y-2 items-center justify-center flex-col bg-slate-700 bg-opacity-90  rounded-md p-5"
-              key={selectedDevice?.serial_number}
-            >
-              <p className="underline w-full  mb-2">Active Device</p>
-              <p>{selectedDevice?.agency}</p>
-              <Image
-                src={selectedDevice?.image}
-                alt={selectedDevice?.device}
-                width={80}
-                height={80}
-              />
-              <div className="text-neutral-300 w-full">
-                <p className="underline">Device: </p>
-                <p>{selectedDevice?.device}</p>
-              </div>
-              <div className="text-neutral-300 w-full">
-                <p className="underline">Serial Number: </p>
-                {selectedDevice?.serial_number}
-              </div>
-              <button
-                className="rounded-md bg-slate-900 p-2 w-full"
-                onClick={() =>
-                  setLiveStreamLink(
-                    `https://unmannedar.com/getlive.html?key=${selectedDevice?.stream_id}`
-                  )
-                }
-              >
-                Start Live Steam
-              </button>
-            </div>
-          )}
-          <LiveStream
-            endPoint={liveStreamLink}
-            closeEndpoint={closeLiveStreamLink}
-          />
+          <SelectedDevice realTimeDroneData={realTimeDroneData} />
         </>
       </GoogleMap>
       <SelectedMarkerDrawer />

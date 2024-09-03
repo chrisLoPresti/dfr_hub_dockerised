@@ -13,6 +13,7 @@
     "@react-google-maps/api": "^2.19.3",
     "axios": "^1.7.3",
     "classnames": "^2.5.1",
+    "egm96-universal": "^1.1.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "next": "14.2.5",

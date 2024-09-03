@@ -66,7 +66,7 @@ export const DevicesProvider = ({ children }) => {
     },
   ];
 
-  const [selectedDevice, setSelectedDevice] = useState(devices[1]);
+  const [selectedDevice, setSelectedDevice] = useState(null);
 
   const selectDevice = useCallback(
     (index) => () => {

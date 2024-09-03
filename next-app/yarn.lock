@@ -839,6 +839,13 @@ ecdsa-sig-formatter@1.0.11:
   dependencies:
     safe-buffer "^5.0.1"
 
+egm96-universal@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/egm96-universal/-/egm96-universal-1.1.0.tgz#7c0dd7d4b37b2c32d301f0e1d8621ef46d295eb2"
+  integrity sha512-LsrOHkIDyFIwRK2PnY3eBC8Efyn+rjzFagOGHFid1CbPee7rgAzezgiYDZodwG8yEggA23mVW0yNvUMkc7XsXw==
+  dependencies:
+    rfc4648 "^1.5.0"
+
 emoji-regex@^8.0.0:
   version "8.0.0"
   resolved "https://registry.npmjs.org/emoji-regex/-/emoji-regex-8.0.0.tgz"
@@ -2468,6 +2475,11 @@ reusify@^1.0.4:
   version "1.0.4"
   resolved "https://registry.npmjs.org/reusify/-/reusify-1.0.4.tgz"
   integrity sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==
+
+rfc4648@^1.5.0:
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/rfc4648/-/rfc4648-1.5.3.tgz#e62b81736c10361ca614efe618a566e93d0b41c0"
+  integrity sha512-MjOWxM065+WswwnmNONOT+bD1nXzY9Km6u3kzvnx8F8/HXGZdz3T6e6vZJ8Q/RIMUSp/nxqjH3GwvJDy8ijeQQ==
 
 rimraf@^3.0.2:
   version "3.0.2"
