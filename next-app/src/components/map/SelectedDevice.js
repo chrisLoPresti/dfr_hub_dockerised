@@ -16,6 +16,7 @@ import { FaWind, FaSdCard, FaLocationArrow } from "react-icons/fa";
 import { MdWbTwilight } from "react-icons/md";
 import classNames from "classnames";
 import * as egm96 from "egm96-universal";
+import { TbHomeDot } from "react-icons/tb";
 
 const defaultDimenstions = {
   height: "352px",
@@ -72,7 +73,7 @@ const SelectedDevice = ({ realTimeDroneData }) => {
     const newLastPosition = { x: xy[0], y: xy[1] };
     setLastPosition(newLastPosition);
   };
-
+  console.log(realTimeDroneData);
   return (
     selectedDevice && (
       <Draggable
@@ -104,7 +105,7 @@ const SelectedDevice = ({ realTimeDroneData }) => {
               x
             </button>
           </div>
-          <div className="w-full h-full flex">
+          <div className="w-full h-full flex" style={{ fontSize: "18px" }}>
             <div
               className="bg-slate-700 h-auto w-1/4 relative flex"
               style={{
@@ -120,7 +121,11 @@ const SelectedDevice = ({ realTimeDroneData }) => {
             </div>
             <div className="w-3/4 p-2 flex flex-wrap">
               <div className="p-1 w-1/4">
-                <div className="flex items-center justify-center text-lg gap-1 bg-slate-700 rounded-md py-1 px-2">
+                <div
+                  className="flex items-center justify-center gap-1 bg-slate-700 rounded-md py-1 px-2"
+                  data-tooltip-id="tooltip"
+                  data-tooltip-content="Number of satellites"
+                >
                   {realTimeDroneData?.data?.position_state?.gps_number}
                   <MdOutlineSatelliteAlt
                     className={classNames({
@@ -138,7 +143,7 @@ const SelectedDevice = ({ realTimeDroneData }) => {
                 </div>
               </div>
               <div className="p-1 w-1/4">
-                <div className="flex items-center justify-center text-lg gap-1 bg-slate-700 rounded-md py-1 px-2">
+                <div className="flex items-center justify-center gap-1 bg-slate-700 rounded-md py-1 px-2">
                   {realTimeDroneData?.data?.wind_speed}
                   <FaWind
                     className={classNames({
@@ -152,7 +157,7 @@ const SelectedDevice = ({ realTimeDroneData }) => {
                 </div>
               </div>
               <div className="p-1 w-1/4">
-                <div className="flex items-center justify-center text-lg gap-1 bg-slate-700 rounded-md py-1 px-2">
+                <div className="flex items-center justify-center gap-1 bg-slate-700 rounded-md py-1 px-2">
                   {realTimeDroneData?.data?.night_lights_state === 0
                     ? "off"
                     : "on"}
@@ -165,7 +170,7 @@ const SelectedDevice = ({ realTimeDroneData }) => {
                 </div>
               </div>
               <div className="p-1 w-1/4">
-                <div className="flex items-center justify-center text-lg gap-1 bg-slate-700 rounded-md py-1 px-2">
+                <div className="flex items-center justify-center gap-1 bg-slate-700 rounded-md py-1 px-2">
                   <p>
                     {(
                       Math.round(
@@ -189,7 +194,7 @@ const SelectedDevice = ({ realTimeDroneData }) => {
                 </div>
               </div>
               <div className="w-full p-1">
-                <div className="flex w-full items-center bg-slate-700 rounded-md p-2 text-lg gap-2">
+                <div className="flex w-full items-center bg-slate-700 rounded-md p-2 gap-4">
                   <div className="w-2/12 flex items-center justify-center flex-col gap-4">
                     <FaLocationArrow className="text-blue-500 mx-auto" />
                     <div className="w-full flex gap-2">
@@ -222,6 +227,21 @@ const SelectedDevice = ({ realTimeDroneData }) => {
                     </div>
                   </div>
                   <div className="flex w-10/12 overflow-hidden flex-wrap">
+                    <div
+                      className="flex items-center truncate w-full p-1"
+                      data-tooltip-id="tooltip"
+                      data-tooltip-content="Distance from homepoint"
+                    >
+                      <TbHomeDot className="text-yellow-500" />:{" "}
+                      {(
+                        Math.round(
+                          realTimeDroneData?.data?.home_distance *
+                            unit.conversion *
+                            100
+                        ) / 100
+                      ).toFixed(2)}{" "}
+                      {unit.label}
+                    </div>
                     <p
                       className="truncate	w-1/2 p-1"
                       data-tooltip-id="tooltip"
